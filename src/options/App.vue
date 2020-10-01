@@ -240,32 +240,5 @@ export default {
             optionsService.$emit('trigger_al_enable', this.al_enabled);
         });
     }
-    /*mounted: () => {
-        
-        const $username = document.querySelector("#username");
-        const $password = document.querySelector("#password");
-
-        document.querySelector("#activateAutoLogin").addEventListener("change", () => {
-            const $spanbox = document.querySelector("span.checkbox");
-
-            switch ( document.querySelector("#activateAutoLogin").checked ) {
-                case true:
-                    $spanbox.setAttribute("checked", "checked");
-                    chrome.storage.sync.set({ ual_active: true });
-                    chrome.storage.sync.get(['ual_username', 'ual_password'], data => {
-                        $username.value = data.ual_username;
-                        $password.value = data.ual_password;
-                    });
-                    break;
-                case false:
-                    chrome.storage.sync.set({ ual_active: false });
-                    $username.value = "";
-                    $password.value = "";
-                    $spanbox.removeAttribute("checked");
-                    break;
-            }
-        });
-
-    }*/
 }
 </script>
