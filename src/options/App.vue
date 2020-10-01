@@ -5,22 +5,22 @@
             <p class="small">
                 Dette er indstillingerne for en uofficiel <a href="https://go.alexander.dk/unilogin-auto">Chrome-udvidelse</a>, og er altså <b>ikke</b> udbudt af eller på nogen måde associeret med Styrelsen for It og Læring.<br>
             </p>
-            <div class="alert alert-success" id="success-save" hidden>
+            <div class="alert alert-success" id="success-save" v-if="success">
                 <b>Success!</b>
                 <br>
                 Dine loginoplysninger blev gemt
             </div>
             <div class="form-group">
                 <label for="activateAutoLogin" style="user-select:none;cursor:pointer;display:block;">
-                    <input type="checkbox" name="activateAutoLogin" id="activateAutoLogin">
-                    <span class="checkbox"></span>
+                    <input type="checkbox" name="activateAutoLogin" id="activateAutoLogin" @change="toggleAutoLogin();" v-model="al_enabled">
+                    <span class="checkbox" v-bind:checked="al_enabled"></span>
                     <span style="margin-left:.75rem;vertical-align:middle;">Aktiver auto login</span>
                 </label>
             </div>
             <Username></Username>
             <Password></Password>
             <div class="page-navigation">
-                <button type="button" class="button button-primary" id="submitSettings">
+                <button type="button" class="button button-primary" @click="saveLogin();">
                     Gem indstillinger
                 </button>
             </div>
@@ -187,6 +187,7 @@
 <script>
 import UsernameField from './UsernameField.vue'
 import PasswordField from './PasswordField.vue'
+import optionsService from './options.service'
 
 export default {
     components: {
@@ -195,42 +196,54 @@ export default {
     },
     data: () => {
         return {
-            version: chrome.runtime.getManifest().version
+            version: chrome.runtime.getManifest().version,
+            al_enabled: false,
+            success: false
         }
     },
-    mounted: () => {
+    methods: {
+        saveLogin() {
+            let errs = false;
+
+            // Trigger Validation of Username
+            optionsService.$emit('trigger_validate_username');
+
+            // If Return
+            optionsService.$on('return_validate_username', _ => {
+                // Trigger Validation of Username
+                optionsService.$emit('trigger_validate_password');
+            });
+
+            optionsService.$on('return_validate_password', _ => {
+                optionsService.$emit('trigger_save_details');
+                this.success = true;
+                setTimeout(() => {
+                   this.success = false; 
+                }, 5000);
+            });
+
+
+            optionsService.$on('return_validate_stop', _ => {
+                return;
+            });
+
+        },
+
+        toggleAutoLogin() {
+            optionsService.$emit('trigger_al_enable', this.al_enabled);
+            chrome.storage.sync.set({ ual_active: this.al_enabled });
+        }
+    },
+    created() {
+        chrome.storage.sync.get(['ual_active'], d => {
+            this.al_enabled = d.ual_active
+            optionsService.$emit('trigger_al_enable', this.al_enabled);
+        });
+    }
+    /*mounted: () => {
+        
         const $username = document.querySelector("#username");
         const $password = document.querySelector("#password");
-
-        document.querySelector("#submitSettings").addEventListener("click", () => {
-            let username = $username.value;
-            let password = $password.value;
-            $username.parentElement.classList.remove("form-error");
-            $password.parentElement.classList.remove("form-error");
-
-            if (
-                username.trim() != "" && username != "undefined"
-                &&
-                username.length == 8
-            ) {
-
-                if ( password.trim() != "" && password.length > 7 ) {
-                    chrome.storage.sync.set({
-                        ual_username: username,
-                        ual_password: password
-                    });
-                    document.querySelector("#success-save").removeAttribute("hidden");
-                    setTimeout(() => {
-                        document.querySelector("#success-save").setAttribute("hidden", "hidden");
-                    }, 2000);
-                } else {
-                    $password.parentElement.classList.add("form-error");
-                }
-                
-            } else {
-                $username.parentElement.classList.add("form-error");
-            }
-        });
 
         document.querySelector("#activateAutoLogin").addEventListener("change", () => {
             const $spanbox = document.querySelector("span.checkbox");
@@ -253,29 +266,6 @@ export default {
             }
         });
 
-        chrome.storage.sync.get(
-            [
-                'ual_active',
-                'ual_username',
-                'ual_password'
-            ],
-            data => {
-                if ( data.ual_active == true ) {
-                    document.querySelector("#activateAutoLogin").checked = true;
-                    document.querySelector("span.checkbox").setAttribute("checked", "checked");
-
-                    if ( data.ual_username && data.ual_username.length == 8 ) {
-                        $username.value = data.ual_username;
-                    }
-
-                    if ( data.ual_password && data.ual_password.length > 7 ) {
-                        $password.value = data.ual_password;
-                    }
-
-                }
-            }
-        )
-
-    }
+    }*/
 }
 </script>
