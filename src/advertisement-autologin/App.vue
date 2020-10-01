@@ -2,10 +2,9 @@
     <div class="al-adv">
         <hr>
         <div class="al-adv-container">
-            <h3>
-                <span class="accent">Auto</span>login</h3>
-                <p class="small">Denne funktion er pålagt af en <a href="https://go.alexander.dk/unilogin-auto">Chrome-udvidelse</a>.</p>
-            <a href="#" id="settingsLink" class="button button-primary">
+            <h3><span class="accent">Auto</span>login</h3>
+            <p class="small">Denne funktion er pålagt af en <a href="https://go.alexander.dk/unilogin-auto">Chrome-udvidelse</a>.</p>
+            <a :href="optionsUrl" id="settingsLink" class="button button-primary">
                 <svg style="vertical-align:middle;" viewBox="0 0 16 16" height="14px"><use fill="#fff" xlink:href="#pencil" /></svg>
                 <span style="margin-left:.8rem;vertical-align:middle;">
                     Opsæt autologin
@@ -45,8 +44,13 @@
 
 <script>
 export default {
-    mounted: () => {
-        document.querySelector("#settingsLink").setAttribute("href", chrome.runtime.getURL("options.html"));
+    data() {
+        return {
+            optionsUrl: ''
+        }
+    },
+    created() {
+        this.optionsUrl = chrome.runtime.getURL("options.html");
     }
 }
 </script>
