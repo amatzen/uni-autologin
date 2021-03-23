@@ -17,14 +17,44 @@ module.exports = {
                 test: /\.scss$/,
                 use: [
                     'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            url: false
+                        }
+                    },
+                    'sass-loader',
+                    'resolve-url-loader'
+                ]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
                     'css-loader',
-                    'sass-loader'
+                    'resolve-url-loader'
                 ]
             },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
-            }
+            },
+            {
+                test: /\.svg$/,
+                loader: 'svg-inline-loader'
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                  {
+                    loader: 'file-loader',
+                    options: {
+                      name: '[name].[ext]',
+                      outputPath: 'fonts/'
+                    }
+                  }
+                ]
+              }
         ]
     },
     plugins: [
