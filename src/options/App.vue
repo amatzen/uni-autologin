@@ -58,7 +58,7 @@
 </template>
 
 <style lang="scss">
-    @import url(https://broker.unilogin.dk/auth/resources/7.3.7.ga/login/unilogin/css/main.css);
+    @import url('./uni-css/broker.unilogin.dk/auth/resources/mcgva/login/unilogin/css/main.css');
     @import url(https://fonts.googleapis.com/css?family=IBM+Plex+Sans:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic);
 
     $accent: #0059b3;
