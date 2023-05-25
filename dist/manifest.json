@@ -14,7 +14,9 @@
         "512": "assets/icons/logo@512w.png"
     },
     "permissions": [
-        "storage",
+        "storage"
+    ],
+    "host_permissions": [
         "https://*.unilogin.dk/*"
     ],
     "content_scripts": [
@@ -28,6 +30,14 @@
         "page": "options.html",
         "open_in_tab": true
     },
-    "web_accessible_resources": ["*"],
-    "content_security_policy":  "script-src 'self' 'unsafe-eval'; object-src 'self'"
+    "web_accessible_resources": [
+        {
+            "matches": ["https://*.unilogin.dk/*"],
+            "resources": ["*"],
+            "accessibility": "accessible"
+        }
+    ],
+    "content_security_policy":  {
+        "extension_pages":      "script-src 'self'; object-src 'self';"
+    }
 }
